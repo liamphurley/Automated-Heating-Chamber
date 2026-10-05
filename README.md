@@ -2,7 +2,7 @@
 
 An ESP32-based temperature control system that monitors temperature with a **DS18B20 digital temperature sensor**, controls a **12 V heating element and cooling fan**, displays live information on an **OLED screen**, and provides a **Wi-Fi web interface** for remote temperature control and monitoring.
 
-![Complete Webpage](images/webpage.png)
+![Assembled Design](images/AssembledDesign.jpg)
 
 ## Features
 
@@ -58,6 +58,12 @@ The ESP32 continuously measures the temperature and compares it against the user
         ▼           ▼
     OLED Display  Web Interface
 ```
+
+## The Chamber
+
+The Chamber was assembled using a stytofoam cooler with the heating component mounted to the side. The external bracket was made with cardboard due to a previous version's 3D printed PLA bracket melting while testing. Internally a 3D printed PLA bracket is still in use. The sensor is hanging in the center of the chamber while the lid is propped open for ventilation. The microcontroller, mosfet boards, and OLED are all connected using breadboards and jumper wires. In a future version it would be best to clean up this assembly but, usability is fully intact due to the webpage.
+
+![Assembled Design](images/AssembledDesign.jpg)
 
 ## Temperature Control
 
