@@ -140,6 +140,7 @@ void loop() {
       if(invalidCount>50)
       {
         digitalWrite(heatPin, LOW);
+        digitalWrite(fanPin, LOW);
         error = 1;
       }
     }
