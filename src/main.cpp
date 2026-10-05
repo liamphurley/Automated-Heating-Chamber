@@ -5,6 +5,7 @@
 #include <Adafruit_SSD1306.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include <wificredentials.h>
 
 #define ONE_WIRE_BUS 2  // GPIO connected to the DS18B20 data pin
 
@@ -17,8 +18,8 @@ DallasTemperature sensors(&oneWire);
 
 int goalTemp = 35;
 
-float lastHeatUpdate =0;
-int lastRecordUpdate=0;
+unsigned long lastHeatUpdate =0;
+unsigned long lastRecordUpdate=0;
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -37,12 +38,17 @@ TemperatureRecord recArray[RECORDS];
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 WebServer server(80);
-const char* ssid = "";
-const char* password = "";
+const char* ssid = WIFI_SSID;
+const char* password = WIFI_PASSWORD;
 
 String graph ="";
 
 String setGraph(TemperatureRecord arr[]);
+
+float lastValidTemp = 0;
+
+int invalidCount = 0;
+bool error = 0;
 
 void setup() {
     Serial.begin(115200);
@@ -62,20 +68,25 @@ void setup() {
     display.setTextColor(SSD1306_WHITE);
     display.setCursor(10, 5);
 
-
-
     //Server
       // Connect to Wi-Fi
-    WiFi.begin(ssid, password);
+    
     Serial.print("Connecting to WiFi");
+                                          
+    WiFi.begin(ssid, password);
+
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
       Serial.print(".");
+
     }
     Serial.println("\nWiFi connected!");
     Serial.println(WiFi.localIP());
 
     server.on("/", []() {
+
+    graph = setGraph(recArray);
+
     String webpage = "<html><head><style>body { background-color: #1e1e2e; color: #f5f5f5; font-family: sans-serif; padding: 20px; }</style></head><body>Current Temp: " + String(sensors.getTempCByIndex(0));
     webpage += "<br><br>Goal Temp: " + String(goalTemp) + "<br><br> Goal Temp Input";
 
@@ -105,29 +116,48 @@ void loop() {
 
     float tempC = sensors.getTempCByIndex(0);
 
-    if (tempC<goalTemp-0.5)
+    if ((tempC<goalTemp-0.5)&&(tempC>-120)&&!error)
     {
       if(millis() - lastHeatUpdate >= 5000)
       {
         digitalWrite(heatPin, HIGH);
         lastHeatUpdate=millis();
         digitalWrite(fanPin, HIGH);
+        invalidCount = 0;
       }
-    } else if(goalTemp<tempC)
+    } else if((goalTemp<tempC)&&(tempC>-120)&&!error)
     {
       if(millis() - lastHeatUpdate >= 500)
       {
         digitalWrite(heatPin, LOW);
         lastHeatUpdate=millis();
         digitalWrite(fanPin, HIGH);
+        invalidCount = 0;
+      }
+    }else 
+    {
+      ++invalidCount;
+      if(invalidCount>50)
+      {
+        digitalWrite(heatPin, LOW);
+        error = 1;
       }
     }
 
     if ((recordCount <RECORDS)&&(millis()-lastRecordUpdate)>=500)
     {
       recArray[recordCount].time = millis();
-      recArray[recordCount].temperature = tempC;
+
+      if(tempC>-120)
+      {
+        recArray[recordCount].temperature = tempC;
+        lastValidTemp = tempC;
+      }else{
+        recArray[recordCount].temperature = lastValidTemp;
+      }
       recArray[recordCount].heaterOn = digitalRead(heatPin);
+
+      lastRecordUpdate = millis();
 
       recordCount++;
     }
@@ -158,8 +188,8 @@ String setGraph(TemperatureRecord arr[]) {
   String finalXaxis ="";
   String chunkXaxis ="";
 
-  int plotable[columns - 2];
-  int plotSum=0;
+  float plotable[columns - 2];
+  float plotSum=0;
   int targetRow;
 
   if(recordCount>(columns-2))
@@ -208,7 +238,7 @@ String setGraph(TemperatureRecord arr[]) {
     graph += "_";
   }
 
-  int Xaxis[columns - 2];
+  unsigned long Xaxis[columns - 2];
   int lastDigit = 1000000;
   int characterCount =6;
 
@@ -259,6 +289,11 @@ String setGraph(TemperatureRecord arr[]) {
 
   graph += '\n';
   graph += finalXaxis;
+
+  if(error)
+  {
+    graph = "Sensor Read Error";
+  }
 
   return graph;
 }

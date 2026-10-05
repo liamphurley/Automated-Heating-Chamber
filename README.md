@@ -111,6 +111,8 @@ The display uses the Adafruit SSD1306 and Adafruit GFX libraries.
 
 ## Wi-Fi Web Interface
 
+![Complete Webpage](images/graph.jpg)
+
 The ESP32 connects to a Wi-Fi network and starts an HTTP server on port `80`.
 
 After connecting, the ESP32 prints its local IP address to the Serial Monitor.
