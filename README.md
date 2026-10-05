@@ -2,6 +2,8 @@
 
 An ESP32-based temperature control system that monitors temperature with a **DS18B20 digital temperature sensor**, controls a **12 V heating element and cooling fan**, displays live information on an **OLED screen**, and provides a **Wi-Fi web interface** for remote temperature control and monitoring.
 
+![Complete Webpage](images/webpage.jpg)
+
 ## Features
 
 *  Real-time temperature measurement using a DS18B20
@@ -111,7 +113,7 @@ The display uses the Adafruit SSD1306 and Adafruit GFX libraries.
 
 ## Wi-Fi Web Interface
 
-![Complete Webpage](images/graph.jpg)
+![Complete Webpage](images/webpage.jpg)
 
 The ESP32 connects to a Wi-Fi network and starts an HTTP server on port `80`.
 
