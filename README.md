@@ -113,8 +113,6 @@ The display uses the Adafruit SSD1306 and Adafruit GFX libraries.
 
 ## Wi-Fi Web Interface
 
-![Complete Webpage](images/webpage.png)
-
 The ESP32 connects to a Wi-Fi network and starts an HTTP server on port `80`.
 
 After connecting, the ESP32 prints its local IP address to the Serial Monitor.
@@ -137,15 +135,7 @@ The web interface displays:
 
 The target temperature can be changed directly from the browser.
 
-```text
-Current Temp: 34.72
-
-Goal Temp: 35
-
-Goal Temp Input
-
-[  37  ] [Set]
-```
+![Complete Webpage](images/webpage.png)
 
 ## Temperature Logging
 
