@@ -353,6 +353,10 @@ Use appropriately rated:
 
 The heating system should also include an independent safety mechanism capable of shutting down the heater if the ESP32, temperature sensor, or control software fails.
 
+## Lessons Learned
+
+It's important to define a specific scope for a project before beginning so a plan can be devised. Not doing this led to delays in this project that could have been avoided. Also a specific deadline could enable realistic goals.
+
 ## License
 
 This project is intended for educational and personal engineering development.
